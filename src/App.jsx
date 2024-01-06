@@ -6,7 +6,7 @@ import { TURNS, WINNER_COMBOS, rows, columns } from './constants'
 function App() {
   const [board, setBoard] = useState(Array(rows).fill(null).map(() => Array(columns).fill(null)))
   const [turn, setTurn] = useState(TURNS.red)
-  const [cellColors, setCellColors] = useState(Array(rows).fill(null).map(() => Array(columns).fill('slate-300')))
+  const [cellColors, setCellColors] = useState(Array(rows).fill(null).map(() => Array(columns).fill('bg-slate-300')))
   const [winner, setWinner] = useState(null)
   const [gameEnded, setGameEnded] = useState(false)
 
@@ -53,7 +53,7 @@ function App() {
 
     // Coloca la ficha en la posición adecuada
     newBoard[row][columnIndex] = turn;
-    newCellColors[row][columnIndex] = turn === TURNS.red ? 'red-500' : 'blue-500'
+    newCellColors[row][columnIndex] = turn === TURNS.red ? 'bg-red-500' : 'bg-blue-500'
     setBoard(newBoard) // Actualiza el tablero
     setCellColors(newCellColors) // Actualiza los colores de las celdas
     setTurn(newTurn) // Cambia el turno
@@ -89,7 +89,7 @@ function App() {
         {
           board.map((row, rowIndex) => (
             row.map((cell, colIndex) => (
-              <div key={`${rowIndex}-${colIndex}`} onClick={() => handleClick(colIndex)} className={`flex justify-center items-center w-10 h-10 bg-${cellColors[rowIndex][colIndex]} rounded-full cursor-pointer`}>
+              <div key={`${rowIndex}-${colIndex}`} onClick={() => handleClick(colIndex)} className={`flex justify-center items-center w-10 h-10 ${cellColors[rowIndex][colIndex]} rounded-full cursor-pointer`}>
                 {board}
               </div>
             ))
