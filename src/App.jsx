@@ -2,6 +2,7 @@ import { useState } from 'react'
 
 import './App.css'
 import { TURNS, WINNER_COMBOS, rows, columns } from './constants'
+import { WinnerModal } from './components/WinnerModal'
 
 function App() {
   const [board, setBoard] = useState(Array(rows).fill(null).map(() => Array(columns).fill(null)))
@@ -72,12 +73,18 @@ function App() {
     }
   }
 
-  console.log(winner)
-
   const handleClick = (index) => {
     if (gameEnded) return
 
     updateBoard(index)
+  }
+
+  const resetGame = () => {
+    setBoard(Array(rows).fill(null).map(() => Array(columns).fill(null)))
+    setTurn(TURNS.red)
+    setCellColors(Array(rows).fill(null).map(() => Array(columns).fill('bg-slate-300')))
+    setWinner(null)
+    setGameEnded(false)
   }
 
   return (
@@ -96,6 +103,11 @@ function App() {
           ))
         }
       </div>
+      {
+        winner != null && (
+          <WinnerModal winner={winner} resetGame={resetGame}/>
+        )
+      }
     </>
   )
 }
