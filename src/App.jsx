@@ -1,51 +1,14 @@
 import { useState } from 'react'
+
 import './App.css'
-
-const TURNS = {
-  red: 'red',
-  blue: 'blue'
-}
-
-const WINNER_COMBOS = [
-  // Combinaciones verticales (columnas)
-  [[0,0], [1,0], [2,0], [3,0]], [[1,0], [2,0], [3,0], [4,0]], [[2,0], [3,0], [4,0], [5,0]],
-  [[0,1], [1,1], [2,1], [3,1]], [[1,1], [2,1], [3,1], [4,1]], [[2,1], [3,1], [4,1], [5,1]],
-  [[0,2], [1,2], [2,2], [3,2]], [[1,2], [2,2], [3,2], [4,2]], [[2,2], [3,2], [4,2], [5,2]],
-  [[0,3], [1,3], [2,3], [3,3]], [[1,3], [2,3], [3,3], [4,3]], [[2,3], [3,3], [4,3], [5,3]],
-  [[0,4], [1,4], [2,4], [3,4]], [[1,4], [2,4], [3,4], [4,4]], [[2,4], [3,4], [4,4], [5,4]],
-  [[0,5], [1,5], [2,5], [3,5]], [[1,5], [2,5], [3,5], [4,5]], [[2,5], [3,5], [4,5], [5,5]],
-  [[0,6], [1,6], [2,6], [3,6]], [[1,6], [2,6], [3,6], [4,6]], [[2,6], [3,6], [4,6], [5,6]],
-  // Combinanciones horizontales [filas]
-  [[0,0], [0,1], [0,2], [0,3]], [[0,1], [0,2], [0,3], [0,4]], [[0,2], [0,3], [0,4], [0,5]], [[0,3], [0,4], [0,5], [0,6]],
-  [[1,0], [1,1], [1,2], [1,3]], [[1,1], [1,2], [1,3], [1,4]], [[1,2], [1,3], [1,4], [1,5]], [[1,3], [1,4], [1,5], [1,6]],
-  [[2,0], [2,1], [2,2], [2,3]], [[2,1], [2,2], [2,3], [2,4]], [[2,2], [2,3], [2,4], [2,5]], [[2,3], [2,4], [2,5], [2,6]],
-  [[3,0], [3,1], [3,2], [3,3]], [[3,1], [3,2], [3,3], [3,4]], [[3,2], [3,3], [3,4], [3,5]], [[3,3], [3,4], [3,5], [3,6]],
-  [[4,0], [4,1], [4,2], [4,3]], [[4,1], [4,2], [4,3], [4,4]], [[4,2], [4,3], [4,4], [4,5]], [[4,3], [4,4], [4,5], [4,6]],
-  [[5,0], [5,1], [5,2], [5,3]], [[5,1], [5,2], [5,3], [5,4]], [[5,2], [5,3], [5,4], [5,5]], [[5,3], [5,4], [5,5], [5,6]],
-  // Combinaciones Diagonales ascendentes [iz -> der]
-  [[0,3], [1,4], [2,5], [3,6]], 
-  [[2,0], [3,1], [4,2], [5,3]],
-  [[1,0], [2,1], [3,2], [4,3]], [[2,1], [3,2], [4,3], [5,4]],
-  [[0,2], [1,3], [2,4], [3,5]], [[1,3], [2,4], [3,5], [4,6]],
-  [[0,1], [1,2], [2,3], [3,4]], [[1,2], [2,3], [3,4], [4,5]], [[2,3], [3,4], [4,5], [5,6]],
-  [[0,0], [1,1], [2,2], [3,3]], [[1,1], [2,2], [3,3], [4,4]], [[2,2], [3,3], [4,4], [5,5]],
-  // Combinaciones Diagonales descedentes [der -> iz]
-  [[0,3], [1,2], [2,1], [3,0]], 
-  [[2,6], [3,5], [4,4], [5,3]],
-  [[1,6], [2,5], [3,4], [4,3]], [[2,5], [3,4], [4,3], [5,2]],
-  [[0,4], [1,3], [2,2], [3,1]], [[1,3], [2,2], [3,1], [4,0]],
-  [[0,6], [1,5], [2,4], [3,3]], [[1,5], [2,4], [3,3], [4,2]], [[2,4], [3,3], [4,2], [5,1]],
-  [[0,5], [1,4], [2,3], [3,2]], [[1,4], [2,3], [3,2], [4,1]], [[2,3], [3,2], [4,1], [5,0]],
-]
-
-const rows = 6;
-const columns = 7;
+import { TURNS, WINNER_COMBOS, rows, columns } from './constants'
 
 function App() {
   const [board, setBoard] = useState(Array(rows).fill(null).map(() => Array(columns).fill(null)))
   const [turn, setTurn] = useState(TURNS.red)
   const [cellColors, setCellColors] = useState(Array(rows).fill(null).map(() => Array(columns).fill('slate-300')))
   const [winner, setWinner] = useState(null)
+  const [gameEnded, setGameEnded] = useState(false)
 
   const checkWinner = (boardToCheck) => {
     // revisamos todas las combinaciones ganadoras para ver si red o blue gano
@@ -67,17 +30,21 @@ function App() {
     return null
   }
 
+  const checkEndGame = (newBoard) => {
+    return newBoard.every((slot) => slot != null)
+  }
+
   const updateBoard = (columnIndex) => {
     const newBoard = [...board]
     const newCellColors = [...cellColors]
     const newTurn = turn === TURNS.red ? TURNS.blue : TURNS.red // Cambia el turno
 
     // Encuentra la fila disponible más baja en la columna seleccionada
-    let row = -1;
+    let row = -1
     for (let i = rows - 1; i >= 0; i--) {
       if (!newBoard[i][columnIndex]) {
-        row = i;
-        break;
+        row = i
+        break
       }
     }
 
@@ -87,20 +54,29 @@ function App() {
     // Coloca la ficha en la posición adecuada
     newBoard[row][columnIndex] = turn;
     newCellColors[row][columnIndex] = turn === TURNS.red ? 'red-500' : 'blue-500'
-    setBoard(newBoard); // Actualiza el tablero
-    setCellColors(newCellColors); // Actualiza los colores de las celdas
-    setTurn(newTurn); // Cambia el turno
+    setBoard(newBoard) // Actualiza el tablero
+    setCellColors(newCellColors) // Actualiza los colores de las celdas
+    setTurn(newTurn) // Cambia el turno
 
     //revisar si hay ganador
     const newWinner = checkWinner(newBoard)
     if (newWinner) {
       setWinner(newWinner)
+      setGameEnded(true)
+    } else {
+      // Si no hay ganador, verificar si el juego termina en empate
+      const endGame = checkEndGame(newBoard)
+      if (endGame) {
+        setWinner(null) // No hay ganador, pero es un empate
+      }
     }
   }
 
   console.log(winner)
 
   const handleClick = (index) => {
+    if (gameEnded) return
+
     updateBoard(index)
   }
 
