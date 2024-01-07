@@ -1,6 +1,6 @@
 export const TURNS = {
     red: 'red',
-    blue: 'blue'
+    yellow: 'yellow'
 }
   
 export const WINNER_COMBOS = [

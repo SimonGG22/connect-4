@@ -1,9 +1,9 @@
 /* eslint-disable react/prop-types */
 export const WinnerModal = ({winner, resetGame}) => {
     return (
-        <section className='absolute w-full h-full top-0 left-0 grid place-items-center bg-slate-200/15'>
-            <div className="flex flex-col gap-4 items-center justify-center w-full h-auto bg-[#192a32]">
-              <h2 className="mt-4 font-bold">
+        <section className='absolute w-full h-full top-0 left-0 grid place-items-center bg-slate-200/70 z-50'>
+            <div className="flex flex-col gap-4 items-center justify-center w-[300px] h-auto bg-[#192a32] rounded-3xl">
+              <h2 className="mt-4 font-bold text-white">
                 {
                   winner === false
                   ? 'EMPATE'
@@ -12,7 +12,11 @@ export const WinnerModal = ({winner, resetGame}) => {
               </h2>
 
               <header className='text-2xl'>
-                {winner && <div className="grid place-items-center w-24 h-24 bg-[#1f3540] shadow-xl rounded-lg text-4xl">{winner}</div>}
+                {winner &&
+                  <>
+                    <div className={`grid place-items-center w-24 h-24 ${winner === 'red' ? 'bg-red-500' : 'bg-yellow-500'} rounded-full text-4xl`}></div>
+                  </>
+                }
               </header>
 
               <footer>

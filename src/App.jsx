@@ -1,13 +1,14 @@
 import { useState } from 'react'
 
-import './App.css'
 import { TURNS, WINNER_COMBOS, rows, columns } from './constants'
 import { WinnerModal } from './components/WinnerModal'
+import { Turn } from './components/Turn'
+import { Score } from './components/Score'
 
 function App() {
   const [board, setBoard] = useState(Array(rows).fill(null).map(() => Array(columns).fill(null)))
   const [turn, setTurn] = useState(TURNS.red)
-  const [cellColors, setCellColors] = useState(Array(rows).fill(null).map(() => Array(columns).fill('bg-slate-300')))
+  const [cellColors, setCellColors] = useState(Array(rows).fill(null).map(() => Array(columns).fill('bg-[#7646f9]')))
   const [winner, setWinner] = useState(null)
   const [gameEnded, setGameEnded] = useState(false)
 
@@ -38,7 +39,7 @@ function App() {
   const updateBoard = (columnIndex) => {
     const newBoard = [...board]
     const newCellColors = [...cellColors]
-    const newTurn = turn === TURNS.red ? TURNS.blue : TURNS.red // Cambia el turno
+    const newTurn = turn === TURNS.red ? TURNS.yellow : TURNS.red // Cambia el turno
 
     // Encuentra la fila disponible más baja en la columna seleccionada
     let row = -1
@@ -54,7 +55,7 @@ function App() {
 
     // Coloca la ficha en la posición adecuada
     newBoard[row][columnIndex] = turn;
-    newCellColors[row][columnIndex] = turn === TURNS.red ? 'bg-red-500' : 'bg-blue-500'
+    newCellColors[row][columnIndex] = turn === TURNS.red ? 'bg-red-500' : 'bg-yellow-500'
     setBoard(newBoard) // Actualiza el tablero
     setCellColors(newCellColors) // Actualiza los colores de las celdas
     setTurn(newTurn) // Cambia el turno
@@ -82,33 +83,39 @@ function App() {
   const resetGame = () => {
     setBoard(Array(rows).fill(null).map(() => Array(columns).fill(null)))
     setTurn(TURNS.red)
-    setCellColors(Array(rows).fill(null).map(() => Array(columns).fill('bg-slate-300')))
+    setCellColors(Array(rows).fill(null).map(() => Array(columns).fill('bg-[#7646f9]')))
     setWinner(null)
     setGameEnded(false)
   }
 
   return (
-    <>
-      <h1 className="text-3xl font-bold underline mb-8">
-        Connect 4
-      </h1>
-      <div className='grid grid-cols-7 grid-rows-6 auto-cols-auto gap-10 max-w-80 max-h-80'>
-        {
-          board.map((row, rowIndex) => (
-            row.map((cell, colIndex) => (
-              <div key={`${rowIndex}-${colIndex}`} onClick={() => handleClick(colIndex)} className={`flex justify-center items-center w-10 h-10 ${cellColors[rowIndex][colIndex]} rounded-full cursor-pointer`}>
-                {board}
-              </div>
+    <main className='relative flex flex-col items-center justify-center w-full h-screen bg-[#7a45ff]'>
+      <Score />
+
+      <section className='flex items-center justify-center w-[450px] h-[460px] rounded-3xl pb-7 bg-[#ffffff] z-20' style={{boxShadow: '0px 5px 1px 6px rgba(0,0,0,0.75)'}}>
+        <div className='grid grid-cols-7 grid-rows-6 gap-4 w-auto h-[400px]'>
+          {
+            board.map((row, rowIndex) => (
+              row.map((cell, colIndex) => (
+                <div key={`${rowIndex}-${colIndex}`} onClick={() => handleClick(colIndex)} className={`flex justify-center items-center w-12 h-12 ${cellColors[rowIndex][colIndex]} rounded-full cursor-pointer`} style={{boxShadow: 'inset 0px 4px 2px 1px rgba(0,0,0,0.75)'}}>
+                  {board}
+                </div>
+              ))
             ))
-          ))
-        }
-      </div>
+          }
+        </div>
+      </section>
+
+      <div className='absolute bottom-0 w-full h-32 bg-[#5c2cd5] z-10' style={{ clipPath: 'polygon(10% 0, 90% 0, 100% 30%, 100% 100%, 70% 100%, 30% 100%, 0 100%, 0% 30%)' }}></div>
+      
+      <Turn turn={turn}/>
+
       {
         winner != null && (
           <WinnerModal winner={winner} resetGame={resetGame}/>
         )
       }
-    </>
+    </main>
   )
 }
 
