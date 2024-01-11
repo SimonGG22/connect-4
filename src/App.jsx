@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import confetti from 'canvas-confetti'
 
 import { TURNS, WINNER_COMBOS, rows, columns } from './constants'
 import { WinnerModal } from './components/WinnerModal'
@@ -63,6 +64,9 @@ function App() {
     if (newWinner) {
       setWinner(newWinner)
       setGameEnded(true)
+      confetti({
+        particleCount: 150
+      })
       if (newWinner === 'red') {
         setRedPoints(redPoints + 1)
       } else if (newWinner === 'yellow') {
@@ -97,7 +101,7 @@ function App() {
   }
 
   return (
-    <main className='relative flex flex-col items-center justify-center w-full h-screen bg-[#7a45ff]'>
+    <main className='relative flex flex-col items-center justify-center w-full h-screen bg-[#7a45ff] overflow-hidden'>
       <Score resetGame={resetGame} redPoints={redPoints} yellowPoints={yellowPoints}/>
 
       <section className='flex items-center justify-center w-[450px] h-[460px] rounded-3xl pb-7 bg-[#ffffff] z-20' style={{boxShadow: '0px 5px 1px 6px rgba(0,0,0,0.75)'}}>
