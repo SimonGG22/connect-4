@@ -2,7 +2,7 @@
 export const Score = ({resetGame, redPoints, yellowPoints}) => {
 
     return (
-        <section className="flex items-center justify-around absolute top-1 w-[450px] h-[60px]">
+        <section className="flex items-center justify-around absolute top-1 w-[300px] sm:w-[450px] h-[60px] mt-10 sm:mt-0">
             <div className="flex items-center justify-center pr-3 relative w-[75px] h-[90%] bg-[#ffff] rounded-xl" style={{boxShadow: '0px 5px 1px 2px rgba(0,0,0,0.75)'}}>
                 <span className="text-xl font-bold">
                     {redPoints}
