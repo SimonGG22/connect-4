@@ -11,29 +11,27 @@ function App() {
   const [cellColors, setCellColors] = useState(Array(rows).fill(null).map(() => Array(columns).fill('bg-[#7646f9]')))
   const [winner, setWinner] = useState(null)
   const [gameEnded, setGameEnded] = useState(false)
+  const [redPoints, setRedPoints] = useState(0)
+  const [yellowPoints, setYellowPoints] = useState(0)
 
   const checkWinner = (boardToCheck) => {
     // revisamos todas las combinaciones ganadoras para ver si red o blue gano
     for (const combo of WINNER_COMBOS) {
       const [a, b, c, d] = combo
-      const [aX, aY] = a;
-      const [bX, bY] = b;
-      const [cX, cY] = c;
-      const [dX, dY] = d;
+      const [aX, aY] = a
+      const [bX, bY] = b
+      const [cX, cY] = c
+      const [dX, dY] = d
       if (
         boardToCheck[aX][aY] &&
         boardToCheck[aX][aY] === boardToCheck[bX][bY] &&
         boardToCheck[aX][aY] === boardToCheck[cX][cY] &&
         boardToCheck[aX][aY] === boardToCheck[dX][dY]
        ) {
-        return boardToCheck[aX][aY];
+        return boardToCheck[aX][aY]
       }
     }
     return null
-  }
-
-  const checkEndGame = (newBoard) => {
-    return newBoard.every((slot) => slot != null)
   }
 
   const updateBoard = (columnIndex) => {
@@ -54,7 +52,7 @@ function App() {
     if (row === -1) return
 
     // Coloca la ficha en la posición adecuada
-    newBoard[row][columnIndex] = turn;
+    newBoard[row][columnIndex] = turn
     newCellColors[row][columnIndex] = turn === TURNS.red ? 'bg-red-500' : 'bg-yellow-500'
     setBoard(newBoard) // Actualiza el tablero
     setCellColors(newCellColors) // Actualiza los colores de las celdas
@@ -65,13 +63,23 @@ function App() {
     if (newWinner) {
       setWinner(newWinner)
       setGameEnded(true)
+      if (newWinner === 'red') {
+        setRedPoints(redPoints + 1)
+      } else if (newWinner === 'yellow') {
+        setYellowPoints(yellowPoints + 1)
+      }
     } else {
       // Si no hay ganador, verificar si el juego termina en empate
       const endGame = checkEndGame(newBoard)
       if (endGame) {
-        setWinner(null) // No hay ganador, pero es un empate
+        setWinner('draw'); // Establece el ganador como 'draw' para representar un empate
+        setGameEnded(true);
       }
     }
+  }
+
+  const checkEndGame = (newBoard) => {
+    return newBoard.every((row) => row.every((slot) => slot !== null))
   }
 
   const handleClick = (index) => {
@@ -90,7 +98,7 @@ function App() {
 
   return (
     <main className='relative flex flex-col items-center justify-center w-full h-screen bg-[#7a45ff]'>
-      <Score />
+      <Score resetGame={resetGame} redPoints={redPoints} yellowPoints={yellowPoints}/>
 
       <section className='flex items-center justify-center w-[450px] h-[460px] rounded-3xl pb-7 bg-[#ffffff] z-20' style={{boxShadow: '0px 5px 1px 6px rgba(0,0,0,0.75)'}}>
         <div className='grid grid-cols-7 grid-rows-6 gap-4 w-auto h-[400px]'>
